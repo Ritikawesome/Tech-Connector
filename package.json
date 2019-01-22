@@ -1,6 +1,6 @@
 {
   "name": "techconnector",
-  "version": "10.7.0",
+  "version": "0.1.0",
   "description": "Social network for developers",
   "main": "server.js",
   "scripts": {
