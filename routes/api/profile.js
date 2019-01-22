@@ -16,24 +16,18 @@ const User = require('../../models/User');
 // @route   GET api/profile/test
 // @desc    Tests profile route
 // @access  Public
-router.get('/test', (req, res) => res.json({
-  msg: 'Profile Works'
-}));
+router.get('/test', (req, res) => res.json({ msg: 'Profile Works' }));
 
 // @route   GET api/profile
 // @desc    Get current users profile
 // @access  Private
 router.get(
   '/',
-  passport.authenticate('jwt', {
-    session: false
-  }),
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
     const errors = {};
 
-    Profile.findOne({
-        user: req.user.id
-      })
+    Profile.findOne({ user: req.user.id })
       .populate('user', ['name', 'avatar'])
       .then(profile => {
         if (!profile) {
@@ -62,9 +56,7 @@ router.get('/all', (req, res) => {
 
       res.json(profiles);
     })
-    .catch(err => res.status(404).json({
-      profile: 'There are no profiles'
-    }));
+    .catch(err => res.status(404).json({ profile: 'There are no profiles' }));
 });
 
 // @route   GET api/profile/handle/:handle
@@ -74,9 +66,7 @@ router.get('/all', (req, res) => {
 router.get('/handle/:handle', (req, res) => {
   const errors = {};
 
-  Profile.findOne({
-      handle: req.params.handle
-    })
+  Profile.findOne({ handle: req.params.handle })
     .populate('user', ['name', 'avatar'])
     .then(profile => {
       if (!profile) {
@@ -96,9 +86,7 @@ router.get('/handle/:handle', (req, res) => {
 router.get('/user/:user_id', (req, res) => {
   const errors = {};
 
-  Profile.findOne({
-      user: req.params.user_id
-    })
+  Profile.findOne({ user: req.params.user_id })
     .populate('user', ['name', 'avatar'])
     .then(profile => {
       if (!profile) {
@@ -109,9 +97,7 @@ router.get('/user/:user_id', (req, res) => {
       res.json(profile);
     })
     .catch(err =>
-      res.status(404).json({
-        profile: 'There is no profile for this user'
-      })
+      res.status(404).json({ profile: 'There is no profile for this user' })
     );
 });
 
@@ -120,14 +106,9 @@ router.get('/user/:user_id', (req, res) => {
 // @access  Private
 router.post(
   '/',
-  passport.authenticate('jwt', {
-    session: false
-  }),
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const {
-      errors,
-      isValid
-    } = validateProfileInput(req.body);
+    const { errors, isValid } = validateProfileInput(req.body);
 
     // Check Validation
     if (!isValid) {
@@ -159,25 +140,19 @@ router.post(
     if (req.body.linkedin) profileFields.social.linkedin = req.body.linkedin;
     if (req.body.instagram) profileFields.social.instagram = req.body.instagram;
 
-    Profile.findOne({
-      user: req.user.id
-    }).then(profile => {
+    Profile.findOne({ user: req.user.id }).then(profile => {
       if (profile) {
         // Update
-        Profile.findOneAndUpdate({
-          user: req.user.id
-        }, {
-          $set: profileFields
-        }, {
-          new: true
-        }).then(profile => res.json(profile));
+        Profile.findOneAndUpdate(
+          { user: req.user.id },
+          { $set: profileFields },
+          { new: true }
+        ).then(profile => res.json(profile));
       } else {
         // Create
 
         // Check if handle exists
-        Profile.findOne({
-          handle: profileFields.handle
-        }).then(profile => {
+        Profile.findOne({ handle: profileFields.handle }).then(profile => {
           if (profile) {
             errors.handle = 'That handle already exists';
             res.status(400).json(errors);
@@ -196,14 +171,9 @@ router.post(
 // @access  Private
 router.post(
   '/experience',
-  passport.authenticate('jwt', {
-    session: false
-  }),
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const {
-      errors,
-      isValid
-    } = validateExperienceInput(req.body);
+    const { errors, isValid } = validateExperienceInput(req.body);
 
     // Check Validation
     if (!isValid) {
@@ -211,9 +181,7 @@ router.post(
       return res.status(400).json(errors);
     }
 
-    Profile.findOne({
-      user: req.user.id
-    }).then(profile => {
+    Profile.findOne({ user: req.user.id }).then(profile => {
       const newExp = {
         title: req.body.title,
         company: req.body.company,
@@ -237,14 +205,9 @@ router.post(
 // @access  Private
 router.post(
   '/education',
-  passport.authenticate('jwt', {
-    session: false
-  }),
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const {
-      errors,
-      isValid
-    } = validateEducationInput(req.body);
+    const { errors, isValid } = validateEducationInput(req.body);
 
     // Check Validation
     if (!isValid) {
@@ -252,9 +215,7 @@ router.post(
       return res.status(400).json(errors);
     }
 
-    Profile.findOne({
-      user: req.user.id
-    }).then(profile => {
+    Profile.findOne({ user: req.user.id }).then(profile => {
       const newEdu = {
         school: req.body.school,
         degree: req.body.degree,
@@ -278,13 +239,9 @@ router.post(
 // @access  Private
 router.delete(
   '/experience/:exp_id',
-  passport.authenticate('jwt', {
-    session: false
-  }),
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    Profile.findOne({
-        user: req.user.id
-      })
+    Profile.findOne({ user: req.user.id })
       .then(profile => {
         // Get remove index
         const removeIndex = profile.experience
@@ -306,13 +263,9 @@ router.delete(
 // @access  Private
 router.delete(
   '/education/:edu_id',
-  passport.authenticate('jwt', {
-    session: false
-  }),
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    Profile.findOne({
-        user: req.user.id
-      })
+    Profile.findOne({ user: req.user.id })
       .then(profile => {
         // Get remove index
         const removeIndex = profile.education
@@ -334,19 +287,11 @@ router.delete(
 // @access  Private
 router.delete(
   '/',
-  passport.authenticate('jwt', {
-    session: false
-  }),
+  passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    Profile.findOneAndRemove({
-      user: req.user.id
-    }).then(() => {
-      User.findOneAndRemove({
-        _id: req.user.id
-      }).then(() =>
-        res.json({
-          success: true
-        })
+    Profile.findOneAndRemove({ user: req.user.id }).then(() => {
+      User.findOneAndRemove({ _id: req.user.id }).then(() =>
+        res.json({ success: true })
       );
     });
   }
