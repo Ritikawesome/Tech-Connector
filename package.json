@@ -1,6 +1,9 @@
 {
   "name": "techconnector",
   "version": "1.0.0",
+  "engines": {
+    "node": "10.7.0"
+  },
   "description": "Tech – Connector.",
   "main": "index.js",
   "scripts": {
