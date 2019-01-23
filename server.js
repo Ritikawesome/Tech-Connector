@@ -25,6 +25,7 @@ mongoose
 
 // Passport middleware
 app.use(passport.initialize());
+console.log("passport configured");
 
 // Passport Config
 require("./config/passport")(passport);
